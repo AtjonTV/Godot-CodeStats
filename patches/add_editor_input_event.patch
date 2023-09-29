@@ -1,0 +1,27 @@
+diff --git a/editor/plugins/script_editor_plugin.cpp b/editor/plugins/script_editor_plugin.cpp
+index 1d449d79a6..e73ad595b3 100644
+--- a/editor/plugins/script_editor_plugin.cpp
++++ b/editor/plugins/script_editor_plugin.cpp
+@@ -246,6 +246,7 @@ void ScriptEditorBase::_bind_methods() {
+ 
+ 	ADD_SIGNAL(MethodInfo("name_changed"));
+ 	ADD_SIGNAL(MethodInfo("edited_script_changed"));
++	ADD_SIGNAL(MethodInfo("editor_input"));
+ 	ADD_SIGNAL(MethodInfo("request_help", PropertyInfo(Variant::STRING, "topic")));
+ 	ADD_SIGNAL(MethodInfo("request_open_script_at_line", PropertyInfo(Variant::OBJECT, "script"), PropertyInfo(Variant::INT, "line")));
+ 	ADD_SIGNAL(MethodInfo("request_save_history"));
+diff --git a/editor/plugins/script_text_editor.cpp b/editor/plugins/script_text_editor.cpp
+index 5fdfb21176..943fc8ee73 100644
+--- a/editor/plugins/script_text_editor.cpp
++++ b/editor/plugins/script_text_editor.cpp
+@@ -1787,6 +1787,10 @@ void ScriptTextEditor::_text_edit_gui_input(const Ref<InputEvent> &ev) {
+ 	Point2 local_pos;
+ 	bool create_menu = false;
+ 
++	if (k.is_valid() && k->is_pressed()) {
++		emit_signal(SNAME("editor_input"), k->as_text());
++	}
++
+ 	CodeEdit *tx = code_editor->get_text_editor();
+ 	if (mb.is_valid() && mb->get_button_index() == MouseButton::RIGHT && mb->is_pressed()) {
+ 		local_pos = mb->get_global_position() - tx->get_global_position();
