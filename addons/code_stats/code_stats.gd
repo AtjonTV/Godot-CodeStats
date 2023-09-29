@@ -21,16 +21,12 @@ func _enter_tree():
 		push_error("Failed to attach code_stats script to editor! Please try to disable and reenable the plugin.")
 		return
 		
-	var current_editor = script_editor.get_current_editor()
-	if current_editor == null:
-		push_error("Failed to attach code_stats script to editor! Please try to disable and reenable the plugin.")
-		return
+	script_editor.editor_script_changed.connect(_attachStatsCollector)
 	
-	if !current_editor.has_signal("editor_input"):
-		push_error("Your Godot Engine build does not have the 'editor_input' event. This plugin will not work without!")
-		return
-
-	current_editor.connect("editor_input", _handleInputs)
+	for open_editor in script_editor.get_open_script_editors():
+		if open_editor.has_signal("editor_input"):
+			if !open_editor.is_connected("editor_input", _handleInputs):
+				open_editor.connect("editor_input", _handleInputs)
 
 	http = HTTPRequest.new()
 	add_child(http)	
@@ -91,3 +87,17 @@ func _on_request_completed(result, response_code, headers, body):
 		print("Response Code: ", response_code)
 		print("Response Headers: ", headers)
 		print("Response Body: ", body)
+
+func _attachStatsCollector(script: Script):
+	var editor = get_editor_interface()
+	if editor == null:
+		return
+
+	var script_editor = editor.get_script_editor()
+	if script_editor == null:
+		return
+
+	for open_editor in script_editor.get_open_script_editors():
+		if open_editor.has_signal("editor_input"):
+			if !open_editor.is_connected("editor_input", _handleInputs):
+				open_editor.connect("editor_input", _handleInputs)
