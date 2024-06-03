@@ -45,7 +45,7 @@ func _exit_tree():
 
 func _handleInputs(input):
 	if verbose:
-		print("Input: %s" % input)
+		print("Code::Stats: Input: %s" % input)
 	var matches = regex.search(input)
 	if matches: 
 		if verbose:
@@ -53,10 +53,10 @@ func _handleInputs(input):
 		inputsCount += 1
 
 func _submitInputs():
+	print("Code::Stats: Sending %d xp" % inputsCount)
 	if inputsCount == 0:
 		return
-	print("Code::Stats: Sending %d xp" % inputsCount)
-	
+
 	var headers = [
 		"User-Agent: CodeStats/1.0 (Godot)",
 		"Accept: */*",
